@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
 <!-- Chosen Palette: Warm Calm Harmony (Background: #FAF9F6, Cards: #FFFFFF, Primary Text: #2C3E50, Accents: Muted Terracotta #E07A5F, Soft Sage #81B29A, Deep Navy #3D405B) -->
-<!-- Application Structure Plan: The SPA is structured logically into 4 sequential sections to guide the user from cause to effect. 1. Introduction & Psychological Mechanism (Interactive step-by-step flow explaining the dopamine loop). 2. The Financial Impact (Interactive bar chart comparing Gen Z and Millennial credit card debt over the last 2 years, with demographic filters). 3. The Spending Breakdown (Doughnut chart categorizing "creep" expenses). 4. The Warning Sign (Line chart of delinquency rates showing the ultimate consequence). This linear narrative flow builds understanding of the 'Lifestyle Creep' phenomenon holistically. -->
-<!-- Visualization & Content Choices: 1. Psychological Loop -> Goal: Organize/Process -> Viz: Interactive HTML/CSS Flexbox diagram -> Justification: Breaks down complex brain mechanics into digestible, clickable steps (NO SVG). 2. Debt Trends -> Goal: Compare/Change -> Viz: Chart.js Bar Chart -> Justification: Best for comparing two distinct demographics across discrete time periods. Includes filtering interaction. 3. Spending Categories -> Goal: Inform/Compare -> Viz: Chart.js Doughnut Chart -> Justification: Clearly shows the composition of discretionary spending. 4. Delinquency Rates -> Goal: Change -> Viz: Chart.js Line Chart -> Justification: Effectively illustrates the rising trend of financial distress over time. -->
-<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -60,10 +57,15 @@
 
     <header class="w-full bg-white border-b border-gray-100 sticky top-0 z-50 shadow-sm">
         <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="text-xl font-bold accent-navy flex items-center gap-2">
+            <!-- Sửa lỗi: Biến Logo thành link về trang chủ -->
+            <a href="index.html" class="text-xl font-bold accent-navy flex items-center gap-2 hover:opacity-80 transition-opacity">
                 <span class="text-2xl">🧠</span> Mind & Money
-            </div>
-            <nav class="hidden md:flex gap-6 text-sm font-medium text-gray-500">
+            </a>
+            
+            <nav class="hidden md:flex gap-6 text-sm font-medium text-gray-500 items-center">
+                <!-- Thêm nút Trang Chủ -->
+                <a href="index.html" class="text-blue-600 font-bold hover:text-blue-700 transition-colors">Trang Chủ</a>
+                <span class="text-gray-300">|</span>
                 <a href="#psychology" class="hover:text-[#E07A5F] transition-colors">Cơ Chế Tâm Lý</a>
                 <a href="#debt" class="hover:text-[#E07A5F] transition-colors">Thực Trạng Nợ</a>
                 <a href="#spending" class="hover:text-[#E07A5F] transition-colors">Chi Tiêu</a>
@@ -216,7 +218,7 @@
                 Hiểu được cơ chế dopamin của não bộ là bước đầu tiên để thoát khỏi lạm phát lối sống. Đánh giá lại khái niệm "phần thưởng" và chuyển hướng sang các giá trị dài hạn sẽ giúp thế hệ trẻ bảo vệ sức khỏe tài chính.
             </p>
             <p class="text-gray-500 text-xs">
-                Dữ liệu mô phỏng dựa trên các báo cáo kinh tế vĩ mô về chi dùng cá nhân giai đoạn 2024-2026.
+                © 2026 Phú Lê. Dữ liệu mô phỏng dựa trên các báo cáo kinh tế vĩ mô về chi dùng cá nhân giai đoạn 2024-2026.
             </p>
         </div>
     </footer>
@@ -343,7 +345,6 @@
 
         // Interactive Logic: Debt Chart Filters
         function updateDebtChart(filterType) {
-            // Update button styles
             const btnAll = document.getElementById('filter-all');
             const btnGenZ = document.getElementById('filter-genz');
             const btnMill = document.getElementById('filter-millennials');
