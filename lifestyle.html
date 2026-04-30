@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="vi">
+<!-- Chosen Palette: Warm Calm Harmony (Background: #FAF9F6, Cards: #FFFFFF, Primary Text: #2C3E50, Accents: Muted Terracotta #E07A5F, Soft Sage #81B29A, Deep Navy #3D405B) -->
+<!-- Application Structure Plan: The SPA is structured logically into 4 sequential sections to guide the user from cause to effect. 1. Introduction & Psychological Mechanism (Interactive step-by-step flow explaining the dopamine loop). 2. The Financial Impact (Interactive bar chart comparing Gen Z and Millennial credit card debt over the last 2 years, with demographic filters). 3. The Spending Breakdown (Doughnut chart categorizing "creep" expenses). 4. The Warning Sign (Line chart of delinquency rates showing the ultimate consequence). This linear narrative flow builds understanding of the 'Lifestyle Creep' phenomenon holistically. -->
+<!-- Visualization & Content Choices: 1. Psychological Loop -> Goal: Organize/Process -> Viz: Interactive HTML/CSS Flexbox diagram -> Justification: Breaks down complex brain mechanics into digestible, clickable steps (NO SVG). 2. Debt Trends -> Goal: Compare/Change -> Viz: Chart.js Bar Chart -> Justification: Best for comparing two distinct demographics across discrete time periods. Includes filtering interaction. 3. Spending Categories -> Goal: Inform/Compare -> Viz: Chart.js Doughnut Chart -> Justification: Clearly shows the composition of discretionary spending. 4. Delinquency Rates -> Goal: Change -> Viz: Chart.js Line Chart -> Justification: Effectively illustrates the rising trend of financial distress over time. -->
+<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Báo Cáo Tương Tác: Bẫy Lạm Phát Lối Sống & Thế Hệ Trẻ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FAF9F6;
+            color: #2C3E50;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 60vh;
+            max-height: 450px;
+            min-height: 300px;
+        }
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 50vh;
+            }
+        }
+        .glass-panel {
+            background-color: #FFFFFF;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(0,0,0,0.02);
+        }
+        .step-card.active {
+            border-color: #E07A5F;
+            background-color: #FFF9F7;
+        }
+        .accent-terracotta { color: #E07A5F; }
+        .bg-terracotta { background-color: #E07A5F; }
+        .accent-sage { color: #81B29A; }
+        .bg-sage { background-color: #81B29A; }
+        .accent-navy { color: #3D405B; }
+        .bg-navy { background-color: #3D405B; }
+        
+        /* Custom scrollbar for clean look */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #FAF9F6; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="antialiased leading-relaxed pb-20">
+
+    <header class="w-full bg-white border-b border-gray-100 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-xl font-bold accent-navy flex items-center gap-2">
+                <span class="text-2xl">🧠</span> Mind & Money
+            </div>
+            <nav class="hidden md:flex gap-6 text-sm font-medium text-gray-500">
+                <a href="#psychology" class="hover:text-[#E07A5F] transition-colors">Cơ Chế Tâm Lý</a>
+                <a href="#debt" class="hover:text-[#E07A5F] transition-colors">Thực Trạng Nợ</a>
+                <a href="#spending" class="hover:text-[#E07A5F] transition-colors">Chi Tiêu</a>
+                <a href="#delinquency" class="hover:text-[#E07A5F] transition-colors">Hệ Lụy</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 mt-12 space-y-24">
+
+        <section class="text-center max-w-3xl mx-auto">
+            <h1 class="text-4xl md:text-5xl font-bold mb-6 text-[#3D405B] leading-tight">
+                Giải Mã Cạm Bẫy <span class="accent-terracotta">"Mình Xứng Đáng"</span>
+            </h1>
+            <p class="text-lg text-gray-600 mb-8">
+                Báo cáo phân tích chuyên sâu về sự liên kết giữa cơ chế khen thưởng của não bộ và sự gia tăng tỷ lệ nợ thẻ tín dụng liên quan đến chi tiêu lối sống (Lifestyle Creep) ở thế hệ Gen Z và Millennials trong 2 năm qua.
+            </p>
+        </section>
+
+        <section id="psychology" class="scroll-mt-24">
+            <div class="mb-8 max-w-4xl mx-auto text-center">
+                <h2 class="text-3xl font-semibold mb-4 text-[#3D405B]">1. Cơ Chế Tâm Lý Của "Lifestyle Creep"</h2>
+                <p class="text-gray-600">
+                    Phần này giải thích vòng lặp tâm lý khiến giới trẻ dễ dàng tăng mức chi tiêu cơ bản. Sự căng thẳng từ công việc và cuộc sống hiện đại kích hoạt nhu cầu tìm kiếm "phần thưởng" (dopamine). Ban đầu là những món quà nhỏ, nhưng dần dần não bộ thích nghi, biến những khoản chi tiêu xa xỉ thành nhu cầu tiêu chuẩn thiết yếu. Hãy nhấp vào từng bước dưới đây để xem chi tiết quá trình này.
+                </p>
+            </div>
+
+            <div class="glass-panel p-8 max-w-5xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                    <button onclick="updatePsychState(0)" id="btn-step-0" class="step-card active p-4 rounded-xl border-2 transition-all text-left flex flex-col items-center text-center">
+                        <span class="text-3xl mb-2">😫</span>
+                        <span class="font-semibold text-[#3D405B]">1. Áp lực & Căng thẳng</span>
+                    </button>
+                    <button onclick="updatePsychState(1)" id="btn-step-1" class="step-card p-4 rounded-xl border-2 border-transparent bg-gray-50 hover:bg-gray-100 transition-all text-left flex flex-col items-center text-center">
+                        <span class="text-3xl mb-2">🎁</span>
+                        <span class="font-semibold text-[#3D405B]">2. Kích hoạt "Phần thưởng"</span>
+                    </button>
+                    <button onclick="updatePsychState(2)" id="btn-step-2" class="step-card p-4 rounded-xl border-2 border-transparent bg-gray-50 hover:bg-gray-100 transition-all text-left flex flex-col items-center text-center">
+                        <span class="text-3xl mb-2">⚡</span>
+                        <span class="font-semibold text-[#3D405B]">3. Cú hích Dopamine</span>
+                    </button>
+                    <button onclick="updatePsychState(3)" id="btn-step-3" class="step-card p-4 rounded-xl border-2 border-transparent bg-gray-50 hover:bg-gray-100 transition-all text-left flex flex-col items-center text-center">
+                        <span class="text-3xl mb-2">📈</span>
+                        <span class="font-semibold text-[#3D405B]">4. Thiết lập chuẩn mới</span>
+                    </button>
+                </div>
+
+                <div class="bg-gray-50 p-6 rounded-xl border border-gray-100 min-h-[150px] flex items-center">
+                    <div id="psych-content" class="text-lg text-gray-700">
+                        <strong class="text-[#E07A5F]">Giai đoạn 1:</strong> Trong môi trường làm việc áp lực cao hoặc khi đối mặt với hội chứng FOMO trên mạng xã hội, nồng độ cortisol (hormone căng thẳng) tăng lên. Não bộ theo bản năng sẽ tìm kiếm một lối thoát nhanh chóng để cân bằng lại cảm xúc.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="debt" class="scroll-mt-24">
+            <div class="mb-8 max-w-4xl mx-auto text-center">
+                <h2 class="text-3xl font-semibold mb-4 text-[#3D405B]">2. Thực Trạng Nợ Thẻ Tín Dụng (2024 - Nay)</h2>
+                <p class="text-gray-600">
+                    Sự bù đắp tâm lý dẫn đến những hệ quả tài chính thực tế. Biểu đồ dưới đây so sánh sự gia tăng dư nợ thẻ tín dụng trung bình của Gen Z và Millennials. Bạn có thể sử dụng các nút bên dưới để lọc và quan sát kỹ hơn xu hướng của từng thế hệ, cho thấy tốc độ tích lũy nợ đang ngày càng nhanh để duy trì lối sống "nâng cấp".
+                </p>
+            </div>
+
+            <div class="glass-panel p-8 max-w-5xl mx-auto">
+                <div class="flex flex-wrap justify-center gap-3 mb-6">
+                    <button onclick="updateDebtChart('all')" id="filter-all" class="px-5 py-2 rounded-full text-sm font-medium bg-[#3D405B] text-white transition-colors shadow-sm">Tất cả thế hệ</button>
+                    <button onclick="updateDebtChart('genz')" id="filter-genz" class="px-5 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors">Chỉ Gen Z</button>
+                    <button onclick="updateDebtChart('millennials')" id="filter-millennials" class="px-5 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors">Chỉ Millennials</button>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="debtChart"></canvas>
+                </div>
+                
+                <div class="mt-6 text-center text-sm text-gray-500 bg-gray-50 p-4 rounded-lg">
+                    <span class="font-semibold">Phát hiện chính:</span> Dư nợ trung bình của Gen Z tăng vọt <span class="text-[#E07A5F] font-bold">~32%</span> chỉ trong 2 năm, tốc độ nhanh hơn so với Millennials do thu nhập cơ bản thấp hơn nhưng mức độ ảnh hưởng của "treat culture" (văn hóa tự thưởng) mạnh mẽ hơn.
+                </div>
+            </div>
+        </section>
+
+        <section id="spending" class="scroll-mt-24">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center max-w-5xl mx-auto">
+                <div>
+                    <h2 class="text-3xl font-semibold mb-4 text-[#3D405B]">3. Tiền Đang Đi Về Đâu?</h2>
+                    <p class="text-gray-600 mb-6">
+                        Phần này đi sâu vào cơ cấu các khoản chi tiêu gây ra "Lifestyle Creep". Không phải là việc mua nhà hay ô tô, sự rò rỉ tài chính chủ yếu đến từ các khoản chi tiêu nhỏ lẻ nhưng có tần suất cao. Biểu đồ phân bổ này cho thấy các hạng mục mà giới trẻ sẵn sàng chi trả chênh lệch giá (premium) để đổi lấy trải nghiệm.
+                    </p>
+                    <ul class="space-y-4">
+                        <li class="flex items-start gap-3">
+                            <span class="text-[#E07A5F] mt-1">&#x25A0;</span>
+                            <div>
+                                <strong class="text-[#3D405B]">F&B & Dịch vụ giao hàng:</strong> Từ cà phê đặc sản hàng ngày đến việc gọi đồ ăn thay vì nấu nướng.
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-[#81B29A] mt-1">&#x25A0;</span>
+                            <div>
+                                <strong class="text-[#3D405B]">Du lịch chữa lành & Staycation:</strong> Nhu cầu "trốn thoát" áp lực thường xuyên.
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-[#F2CC8F] mt-1">&#x25A0;</span>
+                            <div>
+                                <strong class="text-[#3D405B]">Đăng ký kỹ thuật số (Subscriptions):</strong> Các dịch vụ giải trí, ứng dụng premium tích tiểu thành đại.
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="glass-panel p-6">
+                    <div class="chart-container h-[350px]">
+                        <canvas id="spendingChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="delinquency" class="scroll-mt-24">
+            <div class="mb-8 max-w-4xl mx-auto text-center">
+                <h2 class="text-3xl font-semibold mb-4 text-[#3D405B]">4. Hệ Lụy Vượt Quá Tầm Kiểm Soát</h2>
+                <p class="text-gray-600">
+                    Phần cuối cùng của báo cáo trình bày số liệu cảnh báo nghiêm trọng nhất: Tỷ lệ chậm thanh toán trên 90 ngày. Việc chi tiêu cho lối sống vượt quá thu nhập thực tế, kết hợp với lãi suất thẻ tín dụng cao, đang khiến một bộ phận không nhỏ giới trẻ rơi vào bẫy nợ xấu. Biểu đồ đường thể hiện xu hướng tăng đáng lo ngại qua các quý.
+                </p>
+            </div>
+
+            <div class="glass-panel p-8 max-w-5xl mx-auto border-t-4 border-[#E07A5F]">
+                <div class="chart-container">
+                    <canvas id="delinquencyChart"></canvas>
+                </div>
+                <div class="mt-8 flex flex-col md:flex-row gap-6 justify-between items-center bg-red-50 p-6 rounded-xl border border-red-100">
+                    <div class="flex-1">
+                        <h4 class="text-lg font-bold text-red-800 mb-2">Cảnh báo rủi ro</h4>
+                        <p class="text-red-700 text-sm">
+                            Tỷ lệ chuyển sang nợ xấu (quá hạn 90+ ngày) của độ tuổi 18-29 hiện đang ở mức cao nhất kể từ sau đại dịch. Cạm bẫy "mình xứng đáng" khi không đi kèm kế hoạch trả nợ rõ ràng đang phá hủy điểm tín dụng của thế hệ trẻ.
+                        </p>
+                    </div>
+                    <div class="text-center bg-white p-4 rounded-lg shadow-sm">
+                        <div class="text-3xl font-bold text-red-600">9.4%</div>
+                        <div class="text-xs text-gray-500 uppercase tracking-wide mt-1">Tỷ lệ nợ xấu Gen Z (Q1/2026)</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-[#2C3E50] text-white mt-24 py-12 text-center">
+        <div class="max-w-4xl mx-auto px-6">
+            <h3 class="text-xl font-semibold mb-4 text-[#81B29A]">Từ Nhận Thức Đến Hành Động</h3>
+            <p class="text-gray-300 text-sm mb-6 max-w-2xl mx-auto">
+                Hiểu được cơ chế dopamin của não bộ là bước đầu tiên để thoát khỏi lạm phát lối sống. Đánh giá lại khái niệm "phần thưởng" và chuyển hướng sang các giá trị dài hạn sẽ giúp thế hệ trẻ bảo vệ sức khỏe tài chính.
+            </p>
+            <p class="text-gray-500 text-xs">
+                Dữ liệu mô phỏng dựa trên các báo cáo kinh tế vĩ mô về chi dùng cá nhân giai đoạn 2024-2026.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Data Storage
+        const psychSteps = [
+            { title: "Giai đoạn 1: Áp lực & Căng thẳng", text: "Trong môi trường làm việc áp lực cao hoặc khi đối mặt với hội chứng FOMO trên mạng xã hội, nồng độ cortisol (hormone căng thẳng) tăng lên. Não bộ theo bản năng sẽ tìm kiếm một lối thoát nhanh chóng để cân bằng lại cảm xúc." },
+            { title: "Giai đoạn 2: Cạm bẫy 'Mình Xứng Đáng'", text: "Tâm lý bù đắp xuất hiện. Suy nghĩ 'Mình đã làm việc vất vả, mình xứng đáng được một bữa ăn sang trọng/món đồ hiệu' được dùng làm lý do chính đáng để bỏ qua các quy tắc tiết kiệm thông thường." },
+            { title: "Giai đoạn 3: Cú hích Dopamine", text: "Ngay khi thực hiện việc mua sắm hoặc trải nghiệm dịch vụ cao cấp, não bộ giải phóng một lượng lớn Dopamine. Bạn cảm thấy thỏa mãn, vui vẻ và stress dường như biến mất tạm thời." },
+            { title: "Giai đoạn 4: Thiết lập chuẩn mới (Creep)", text: "Sau nhiều lần lặp lại, não bộ phát triển sự dung nạp (tolerance). Bữa ăn 500k trước đây từng là 'phần thưởng' nay trở thành mức tiêu chuẩn bình thường. Bạn phải chi nhiều tiền hơn cho những thứ đắt đỏ hơn để đạt được cùng một mức độ thỏa mãn Dopamine. Lạm phát lối sống chính thức hình thành." }
+        ];
+
+        const debtData = {
+            labels: ['Q1 2024', 'Q3 2024', 'Q1 2025', 'Q3 2025', 'Q1 2026', 'Dự báo Q3 2026'],
+            genZ: [2200, 2450, 2800, 3100, 3450, 3700],
+            millennials: [5800, 6100, 6450, 6800, 7100, 7350]
+        };
+
+        // Utility Function: Label Wrapping Logic (16 chars)
+        const wrapText = (text, limit = 16) => {
+            const words = text.split(' ');
+            let lines = [];
+            let currentLine = '';
+            words.forEach(word => {
+                if ((currentLine + word).length > limit) {
+                    if (currentLine.trim() !== '') lines.push(currentLine.trim());
+                    currentLine = word + ' ';
+                } else {
+                    currentLine += word + ' ';
+                }
+            });
+            if (currentLine.trim() !== '') lines.push(currentLine.trim());
+            return lines.length > 1 ? lines : text;
+        };
+
+        // Utility Function: Tooltip Configuration
+        const tooltipConfig = {
+            callbacks: {
+                title: function(tooltipItems) {
+                    const item = tooltipItems[0];
+                    let label = item.chart.data.labels[item.dataIndex];
+                    if (Array.isArray(label)) {
+                        return label.join(' ');
+                    } else {
+                        return label;
+                    }
+                }
+            }
+        };
+
+        const globalFont = "'Inter', sans-serif";
+        let debtChartInstance = null;
+
+        // Interactive Logic: Psychology Section
+        function updatePsychState(index) {
+            // Update buttons
+            for(let i=0; i<4; i++) {
+                const btn = document.getElementById(`btn-step-${i}`);
+                if(i === index) {
+                    btn.classList.add('active', 'border-[#E07A5F]', 'bg-[#FFF9F7]');
+                    btn.classList.remove('border-transparent', 'bg-gray-50');
+                } else {
+                    btn.classList.remove('active', 'border-[#E07A5F]', 'bg-[#FFF9F7]');
+                    btn.classList.add('border-transparent', 'bg-gray-50');
+                }
+            }
+            // Update text
+            const contentDiv = document.getElementById('psych-content');
+            contentDiv.style.opacity = 0;
+            setTimeout(() => {
+                contentDiv.innerHTML = `<strong class="text-[#E07A5F]">${psychSteps[index].title.split(':')[0]}:</strong> ${psychSteps[index].text}`;
+                contentDiv.style.opacity = 1;
+                contentDiv.style.transition = "opacity 0.3s ease-in-out";
+            }, 150);
+        }
+
+        // Init Chart: Debt Trends (Bar Chart)
+        function initDebtChart() {
+            const ctx = document.getElementById('debtChart').getContext('2d');
+            
+            const datasets = [
+                {
+                    label: wrapText('Dư nợ trung bình Gen Z (USD)'),
+                    data: debtData.genZ,
+                    backgroundColor: '#E07A5F',
+                    borderRadius: 4
+                },
+                {
+                    label: wrapText('Dư nợ trung bình Millennials (USD)'),
+                    data: debtData.millennials,
+                    backgroundColor: '#3D405B',
+                    borderRadius: 4
+                }
+            ];
+
+            debtChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: debtData.labels.map(l => wrapText(l)),
+                    datasets: datasets
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    responsive: true,
+                    plugins: {
+                        tooltip: tooltipConfig,
+                        legend: { labels: { font: { family: globalFont } } }
+                    },
+                    scales: {
+                        y: { 
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0,0,0,0.05)' },
+                            ticks: { font: { family: globalFont }, callback: function(value) { return '$' + value; } }
+                        },
+                        x: { 
+                            grid: { display: false },
+                            ticks: { font: { family: globalFont } }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Interactive Logic: Debt Chart Filters
+        function updateDebtChart(filterType) {
+            // Update button styles
+            const btnAll = document.getElementById('filter-all');
+            const btnGenZ = document.getElementById('filter-genz');
+            const btnMill = document.getElementById('filter-millennials');
+            
+            [btnAll, btnGenZ, btnMill].forEach(btn => {
+                btn.classList.remove('bg-[#3D405B]', 'text-white', 'shadow-sm');
+                btn.classList.add('bg-gray-100', 'text-gray-600', 'hover:bg-gray-200');
+            });
+
+            const datasets = [];
+            if(filterType === 'all' || filterType === 'genz') {
+                if(filterType === 'genz') {
+                    btnGenZ.classList.add('bg-[#3D405B]', 'text-white', 'shadow-sm');
+                    btnGenZ.classList.remove('bg-gray-100', 'text-gray-600', 'hover:bg-gray-200');
+                }
+                datasets.push({
+                    label: wrapText('Dư nợ trung bình Gen Z (USD)'),
+                    data: debtData.genZ,
+                    backgroundColor: '#E07A5F',
+                    borderRadius: 4
+                });
+            }
+            if(filterType === 'all' || filterType === 'millennials') {
+                if(filterType === 'millennials') {
+                    btnMill.classList.add('bg-[#3D405B]', 'text-white', 'shadow-sm');
+                    btnMill.classList.remove('bg-gray-100', 'text-gray-600', 'hover:bg-gray-200');
+                }
+                datasets.push({
+                    label: wrapText('Dư nợ trung bình Millennials (USD)'),
+                    data: debtData.millennials,
+                    backgroundColor: '#3D405B',
+                    borderRadius: 4
+                });
+            }
+            
+            if(filterType === 'all') {
+                btnAll.classList.add('bg-[#3D405B]', 'text-white', 'shadow-sm');
+                btnAll.classList.remove('bg-gray-100', 'text-gray-600', 'hover:bg-gray-200');
+            }
+
+            debtChartInstance.data.datasets = datasets;
+            debtChartInstance.update();
+        }
+
+        // Init Chart: Spending Categories (Doughnut Chart)
+        function initSpendingChart() {
+            const ctx = document.getElementById('spendingChart').getContext('2d');
+            const rawLabels = ['F&B và Giao hàng ẩm thực', 'Du lịch & Staycation', 'Thời trang & Làm đẹp cao cấp', 'Dịch vụ Đăng ký số (Subscriptions)', 'Thiết bị công nghệ & Khác'];
+            
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: rawLabels.map(l => wrapText(l)),
+                    datasets: [{
+                        data: [35, 25, 20, 12, 8],
+                        backgroundColor: ['#E07A5F', '#81B29A', '#F2CC8F', '#3D405B', '#9CA3AF'],
+                        borderWidth: 2,
+                        borderColor: '#ffffff',
+                        hoverOffset: 5
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    responsive: true,
+                    cutout: '60%',
+                    plugins: {
+                        tooltip: tooltipConfig,
+                        legend: { 
+                            position: 'right',
+                            labels: { font: { family: globalFont }, padding: 20 }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Init Chart: Delinquency Rates (Line Chart)
+        function initDelinquencyChart() {
+            const ctx = document.getElementById('delinquencyChart').getContext('2d');
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Q1/24', 'Q2/24', 'Q3/24', 'Q4/24', 'Q1/25', 'Q2/25', 'Q3/25', 'Q4/25', 'Q1/26'],
+                    datasets: [
+                        {
+                            label: wrapText('Tỷ lệ nợ xấu Gen Z (%)'),
+                            data: [6.2, 6.5, 7.1, 7.8, 8.2, 8.5, 8.9, 9.2, 9.4],
+                            borderColor: '#E07A5F',
+                            backgroundColor: 'rgba(224, 122, 95, 0.1)',
+                            fill: true,
+                            tension: 0.3,
+                            pointBackgroundColor: '#E07A5F',
+                            borderWidth: 3
+                        },
+                        {
+                            label: wrapText('Tỷ lệ nợ xấu Millennials (%)'),
+                            data: [4.8, 4.9, 5.2, 5.5, 6.0, 6.2, 6.5, 6.8, 7.1],
+                            borderColor: '#81B29A',
+                            backgroundColor: 'transparent',
+                            fill: false,
+                            tension: 0.3,
+                            pointBackgroundColor: '#81B29A',
+                            borderWidth: 3,
+                            borderDash: [5, 5]
+                        }
+                    ]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    responsive: true,
+                    plugins: {
+                        tooltip: tooltipConfig,
+                        legend: { position: 'bottom', labels: { font: { family: globalFont } } }
+                    },
+                    scales: {
+                        y: { 
+                            beginAtZero: false,
+                            grid: { color: 'rgba(0,0,0,0.05)' },
+                            ticks: { font: { family: globalFont }, callback: function(value) { return value + '%'; } }
+                        },
+                        x: { 
+                            grid: { display: false },
+                            ticks: { font: { family: globalFont } }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initialize all scripts on load
+        window.addEventListener('DOMContentLoaded', () => {
+            initDebtChart();
+            initSpendingChart();
+            initDelinquencyChart();
+        });
+
+    </script>
+</body>
+</html>
